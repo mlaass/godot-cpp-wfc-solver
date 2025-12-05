@@ -2,6 +2,10 @@
 
 A C++ GDExtension implementing a Wave Function Collapse (WFC) solver for Godot 4.4+.
 
+## About
+
+This is a separate repository that implements the solver for [godot-constraint-solving](https://github.com/AlexeyBond/godot-constraint-solving), which we have integrated in a fork of the original here: [https://github.com/mlaass/godot-constraint-solving](https://github.com/mlaass/godot-constraint-solving).
+
 ## Prerequisites
 
 - [godot-cpp](https://github.com/godotengine/godot-cpp) built and available at `../godot-cpp`
