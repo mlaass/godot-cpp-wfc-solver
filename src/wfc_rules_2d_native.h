@@ -22,7 +22,7 @@ private:
     TypedArray<WFCBitMatrixNative> axis_matrices_;
     PackedFloat32Array probabilities_;
     Ref<WFCBitSetNative> edge_domain_;
-    bool probabilities_enabled_ = true;
+    bool probabilities_enabled_ = false;
     int tile_count_ = 0;
 
 protected:

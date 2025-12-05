@@ -90,8 +90,9 @@ if env["platform"] == "macos":
 else:
     lib_suffix_for_linking = lib_suffix
 
-# Library name: godot-cpp.linux.template_release.x86_64
-env.Append(LIBS=[f"godot-cpp.{env['platform']}.template_{env['target']}{lib_suffix_for_linking}"])
+# Link against godot-cpp library (uses template_ prefix in its naming)
+godot_cpp_target = f"template_{env['target']}" if env['target'] in ['release', 'debug'] else env['target']
+env.Append(LIBS=[f"godot-cpp.{env['platform']}.{godot_cpp_target}{lib_suffix_for_linking}"])
 
 # Sources for extension
 sources = Glob("src/*.cpp")

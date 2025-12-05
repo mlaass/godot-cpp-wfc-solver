@@ -186,6 +186,21 @@ void WFC2DProblemNative::mark_related_cells(int changed_cell_id, const Callable&
     }
 }
 
+PackedInt64Array WFC2DProblemNative::get_related_cells(int changed_cell_id) {
+    PackedInt64Array result;
+    Vector2i pos = id_to_coord(changed_cell_id);
+
+    for (int i = 0; i < axes_.size(); i++) {
+        Vector2i axis = axes_[i];
+        Vector2i other_pos = pos + axis;
+        if (rect_.has_point(other_pos + rect_.position)) {
+            result.append(coord_to_id(other_pos));
+        }
+    }
+
+    return result;
+}
+
 int WFC2DProblemNative::pick_divergence_option(TypedArray<int> options) {
     if (rules_.is_null() || !rules_->get_probabilities_enabled()) {
         return WFCProblemNative::pick_divergence_option(options);
@@ -193,7 +208,9 @@ int WFC2DProblemNative::pick_divergence_option(TypedArray<int> options) {
 
     if (options.size() == 0) return -1;
     if (options.size() == 1) {
-        int result = options[0];
+        // Explicit Variant conversion to avoid issues with TypedArray operator[]
+        Variant v = options[0];
+        int result = static_cast<int>(static_cast<int64_t>(v));
         options.remove_at(0);
         return result;
     }
@@ -202,7 +219,8 @@ int WFC2DProblemNative::pick_divergence_option(TypedArray<int> options) {
     float probabilities_sum = 0.0f;
 
     for (int i = 0; i < options.size(); i++) {
-        int option = options[i];
+        Variant v = options[i];
+        int option = static_cast<int>(static_cast<int64_t>(v));
         if (option >= 0 && option < probabilities.size()) {
             probabilities_sum += probabilities[option];
         }
@@ -213,7 +231,8 @@ int WFC2DProblemNative::pick_divergence_option(TypedArray<int> options) {
     int chosen_index = 0;
 
     for (int i = 0; i < options.size(); i++) {
-        int option = options[i];
+        Variant v = options[i];
+        int option = static_cast<int>(static_cast<int64_t>(v));
         if (option >= 0 && option < probabilities.size()) {
             probabilities_sum += probabilities[option];
         }
@@ -223,7 +242,8 @@ int WFC2DProblemNative::pick_divergence_option(TypedArray<int> options) {
         }
     }
 
-    int result = options[chosen_index];
+    Variant v = options[chosen_index];
+    int result = static_cast<int>(static_cast<int64_t>(v));
     options.remove_at(chosen_index);
     return result;
 }

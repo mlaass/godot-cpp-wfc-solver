@@ -63,6 +63,9 @@ void WFCProblemNative::_bind_methods() {
     ClassDB::bind_method(D_METHOD("pick_divergence_option", "options"), &WFCProblemNative::pick_divergence_option);
     ClassDB::bind_method(D_METHOD("supports_ac4"), &WFCProblemNative::supports_ac4);
     ClassDB::bind_method(D_METHOD("get_ac4_binary_constraints"), &WFCProblemNative::get_ac4_binary_constraints);
+    ClassDB::bind_method(D_METHOD("get_related_cells", "changed_cell_id"), &WFCProblemNative::get_related_cells);
+    ClassDB::bind_method(D_METHOD("debug_randi_range", "from", "to"), &WFCProblemNative::debug_randi_range);
+    ClassDB::bind_method(D_METHOD("debug_array_contents", "arr"), &WFCProblemNative::debug_array_contents);
 }
 
 WFCProblemNative::WFCProblemNative() {
@@ -101,6 +104,11 @@ void WFCProblemNative::mark_related_cells_internal(int changed_cell_id, std::fun
     // Internal C++ version - to be overridden by derived classes
 }
 
+PackedInt64Array WFCProblemNative::get_related_cells(int changed_cell_id) {
+    // Default: return empty array (subclasses override)
+    return PackedInt64Array();
+}
+
 TypedArray<WFCProblemSubProblemNative> WFCProblemNative::split(int concurrency_limit) {
     TypedArray<WFCProblemSubProblemNative> result;
     Ref<WFCProblemSubProblemNative> sub;
@@ -114,9 +122,27 @@ int WFCProblemNative::pick_divergence_option(TypedArray<int> options) {
     if (options.size() == 0) return -1;
 
     int index = UtilityFunctions::randi_range(0, options.size() - 1);
-    int result = options[index];
+    // Explicit Variant conversion to avoid issues with TypedArray operator[]
+    Variant v = options[index];
+    int result = static_cast<int>(static_cast<int64_t>(v));
     options.remove_at(index);
     return result;
+}
+
+// Debug methods
+int WFCProblemNative::debug_randi_range(int from, int to) {
+    return UtilityFunctions::randi_range(from, to);
+}
+
+String WFCProblemNative::debug_array_contents(TypedArray<int> arr) {
+    String s = "size=" + String::num_int64(arr.size()) + " [";
+    for (int i = 0; i < arr.size(); i++) {
+        Variant v = arr[i];
+        s += String::num_int64(static_cast<int64_t>(v));
+        if (i < arr.size() - 1) s += ", ";
+    }
+    s += "]";
+    return s;
 }
 
 bool WFCProblemNative::supports_ac4() {

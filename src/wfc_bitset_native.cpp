@@ -114,20 +114,9 @@ bool WFCBitSetNative::is_pot(int64_t x) {
 }
 
 int WFCBitSetNative::count_bits_helper(int64_t value, int initial, int pass_if_more_than) const {
-    int res = initial;
-    while (value != 0) {
-        int idx = get_first_set_bit_index(value);
-        if (idx >= 0) {
-            value ^= (1LL << idx);
-            res++;
-            if (res > pass_if_more_than) {
-                return res;
-            }
-        } else {
-            break;
-        }
-    }
-    return res;
+    // Use compiler builtin for fast, correct bit counting (compiles to POPCNT instruction)
+    int count = __builtin_popcountll(static_cast<uint64_t>(value));
+    return initial + count;
 }
 
 void WFCBitSetNative::initialize(int size_val, bool default_val) {

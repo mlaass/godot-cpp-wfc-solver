@@ -73,8 +73,15 @@ public:
     virtual bool supports_ac4();
     virtual TypedArray<WFCProblemAC4BinaryConstraintNative> get_ac4_binary_constraints();
 
+    // Returns cell IDs that depend on the changed cell (for AC3 propagation)
+    virtual PackedInt64Array get_related_cells(int changed_cell_id);
+
     // C++ specific: Internal version with std::function for performance
     void mark_related_cells_internal(int changed_cell_id, std::function<void(int)> mark_cell);
+
+    // Debug methods
+    int debug_randi_range(int from, int to);
+    String debug_array_contents(TypedArray<int> arr);
 };
 
 } // namespace godot

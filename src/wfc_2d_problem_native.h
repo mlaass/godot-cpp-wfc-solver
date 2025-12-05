@@ -83,6 +83,7 @@ public:
     virtual Ref<WFCBitSetNative> get_default_domain() override;
     virtual Ref<WFCBitSetNative> compute_cell_domain(const Ref<WFCSolverStateNative>& state, int cell_id) override;
     virtual void mark_related_cells(int changed_cell_id, const Callable& mark_cell) override;
+    virtual PackedInt64Array get_related_cells(int changed_cell_id) override;
     virtual int pick_divergence_option(TypedArray<int> options) override;
     virtual bool supports_ac4() override;
     virtual TypedArray<WFCProblemAC4BinaryConstraintNative> get_ac4_binary_constraints() override;

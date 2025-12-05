@@ -105,36 +105,17 @@ bool WFCSolverNative::propagate_constraints_ac3() {
 
         Dictionary related;
 
+        // Use get_related_cells to find neighbors of changed cells
         for (int i = 0; i < changed.size(); i++) {
             int cell_id = changed[i];
 
-            // Create a lambda to mark related cells
-            Callable mark_related = Callable(this, "");  // We'll handle this differently
+            PackedInt64Array related_cells = problem_->get_related_cells(cell_id);
 
-            // For C++, we'll iterate differently. We need to use the internal method
-            // For now, we'll use a simpler approach
-            problem_->mark_related_cells(cell_id, Callable());
-        }
-
-        // Since mark_related_cells uses a Callable which is complex in C++,
-        // let's refactor to use the internal C++ method
-        // For now, we'll implement a simpler version
-
-        // Simplified: mark all cells as potentially related
-        for (int i = 0; i < changed.size(); i++) {
-            int changed_cell_id = changed[i];
-
-            // Use the internal mark method - call mark_related_cells with a lambda wrapper
-            // But since we can't easily pass lambdas to GDScript-style Callable,
-            // we'll need to refactor this
-
-            // For now, iterate through all cells and check if they're related
-            int cell_count = problem_->get_cell_count();
-            for (int related_cell_id = 0; related_cell_id < cell_count; related_cell_id++) {
-                if (current_state_->is_cell_solved(related_cell_id)) {
-                    continue;
+            for (int j = 0; j < related_cells.size(); j++) {
+                int related_cell_id = related_cells[j];
+                if (!current_state_->is_cell_solved(related_cell_id)) {
+                    related[related_cell_id] = true;
                 }
-                related[related_cell_id] = true;
             }
         }
 
